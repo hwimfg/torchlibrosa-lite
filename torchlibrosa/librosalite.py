@@ -2,6 +2,7 @@ import warnings
 
 import numpy as np
 import scipy
+import scipy.signal
 
 from ._cache import cache
 
