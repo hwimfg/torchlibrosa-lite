@@ -144,7 +144,7 @@ class LibrosaLite:
 
         return np.pad(data, lengths, **kwargs)
 
-    # TODO: implement cache
+    @cache(level=40)
     @staticmethod
     def util_normalize(
         S: np.ndarray,
@@ -697,7 +697,8 @@ class LibrosaLite:
         hz: np.ndarray = LibrosaLite.core_mel_to_hz(mels, htk=htk)
         return hz
 
-    # TODO: implement cache
+
+    @cache(level=10)
     @staticmethod
     def filters_mel(
         *,
