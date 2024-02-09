@@ -203,7 +203,7 @@ class STFT(DFTBase):
         fft_window = LibrosaLite.filters_get_window(window, self.win_length, fftbins=True)
 
         # Pad the window out to n_fft size.
-        fft_window = LibrosaLite.util_pad_center(fft_window, n_fft)
+        fft_window = LibrosaLite.util_pad_center(fft_window, size=n_fft)
 
         # DFT & IDFT matrix.
         self.W = self.dft_matrix(n_fft)
@@ -395,7 +395,7 @@ class ISTFT(DFTBase):
         # (win_length,)
 
         # Pad the window to n_fft
-        ifft_window = LibrosaLite.util_pad_center(ifft_window, self.n_fft)
+        ifft_window = LibrosaLite.util_pad_center(ifft_window, size=self.n_fft)
 
         self.conv_real.weight.data = torch.Tensor(
             np.real(self.W * ifft_window[None, :]).T
@@ -416,7 +416,7 @@ class ISTFT(DFTBase):
         # (win_length,)
 
         ola_window = LibrosaLite.util_normalize(ola_window, norm=None) ** 2
-        ola_window = LibrosaLite.util_pad_center(ola_window, self.n_fft)
+        ola_window = LibrosaLite.util_pad_center(ola_window, size=self.n_fft)
         ola_window = torch.Tensor(ola_window)
 
         self.register_buffer("ola_window", ola_window)
