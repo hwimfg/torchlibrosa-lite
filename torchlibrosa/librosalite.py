@@ -838,6 +838,7 @@ class LibrosaLite:
 
         return weights
 
+    @staticmethod
     def load(
         path,
         offset=0.0,
