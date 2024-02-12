@@ -4,6 +4,8 @@ import numpy as np
 import scipy
 import scipy.signal
 
+import soundfile as sf
+
 from ._cache import cache
 
 
@@ -698,7 +700,6 @@ class LibrosaLite:
         hz: np.ndarray = LibrosaLite.core_mel_to_hz(mels, htk=htk)
         return hz
 
-
     @cache(level=10)
     @staticmethod
     def filters_mel(
@@ -836,3 +837,33 @@ class LibrosaLite:
             )
 
         return weights
+
+    def load(
+        path,
+        offset=0.0,
+        duration=None,
+        dtype=np.float32,
+        mono=True,
+    ):
+        current_audio = sf.SoundFile(path)
+
+        with current_audio as sf_desc:
+            sr_native = sf_desc.samplerate
+            if offset:
+                # Seek to the start of the target read
+                sf_desc.seek(int(offset * sr_native))
+            if duration is not None:
+                frame_duration = int(duration * sr_native)
+            else:
+                frame_duration = -1
+
+            # Load the target number of frames, and transpose to match librosa form
+            y = sf_desc.read(
+                frames=frame_duration, dtype=dtype, always_2d=False
+            ).T
+
+            if mono:
+                if y.ndim > 1:
+                    y = np.mean(y, axis=tuple(range(y.ndim - 1)))
+
+        return y, sr_native
